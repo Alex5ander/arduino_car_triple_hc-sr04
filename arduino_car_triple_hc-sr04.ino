@@ -14,8 +14,7 @@
 
 #define SPEED 150
 
-void setup()
-{
+void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
@@ -38,47 +37,44 @@ void setup()
   digitalWrite(4, HIGH);
 }
 
-int state = 3;
-
-void loop()
-{
+void loop() {
   // put your main code here, to run repeatedly:
   float distanceLeft = calculateDistance(TRIGGER_LEFT, ECHO_LEFT);
   float distanceRight = calculateDistance(TRIGGER_RIGHT, ECHO_RIGHT);
   float distanceCenter = calculateDistance(TRIGGER_CENTER, ECHO_CENTER);
 
-  if (distanceCenter < 20 || distanceRight < 20 || distanceLeft < 20)
-  {
-    if (distanceLeft > distanceRight && distanceLeft > 15)
-    {
-      state = 1;
-    }
-    else if (distanceRight > distanceLeft && distanceRight > 15)
-    {
-      state = 2;
-    }
-  }
-  else
-  {
-    state = 3;
+  if (distanceLeft < 15 && distanceRight > 15) {
+    right();
+    delay(250);
+    stop();
+  } else {
+    stop();
   }
 
-  switch (state)
-  {
-  case 1:
+  if (distanceRight < 15 && distanceLeft > 15) {
     left();
-    break;
-  case 2:
-    right();
-    break;
-  case 3:
+    delay(250);
+    stop();
+  } else {
+    stop();
+  }
+
+  if (distanceCenter < 15) {
+    if (distanceLeft > 15) {
+      left();
+    } else if (distanceRight > 15) {
+      right();
+    }else {
+      back();
+    }
+    delay(250);
+    stop();
+  } else {
     forward();
-    break;
   }
 }
 
-float calculateDistance(int trigger, int echo)
-{
+float calculateDistance(int trigger, int echo) {
   digitalWrite(trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigger, LOW);
@@ -89,8 +85,7 @@ float calculateDistance(int trigger, int echo)
   return distance;
 }
 
-void right()
-{
+void right() {
   analogWrite(M1, SPEED);
   digitalWrite(M2, LOW);
 
@@ -98,8 +93,7 @@ void right()
   digitalWrite(M4, LOW);
 }
 
-void left()
-{
+void left() {
   digitalWrite(M1, LOW);
   analogWrite(M2, SPEED);
 
@@ -107,8 +101,7 @@ void left()
   analogWrite(M4, SPEED);
 }
 
-void back()
-{
+void back() {
   digitalWrite(M1, LOW);
   analogWrite(M2, SPEED);
 
@@ -116,8 +109,7 @@ void back()
   digitalWrite(M4, LOW);
 }
 
-void forward()
-{
+void forward() {
   analogWrite(M1, SPEED);
   digitalWrite(M2, LOW);
 
@@ -125,8 +117,7 @@ void forward()
   analogWrite(M4, SPEED);
 }
 
-void stop()
-{
+void stop() {
   digitalWrite(M1, LOW);
   digitalWrite(M2, LOW);
 
